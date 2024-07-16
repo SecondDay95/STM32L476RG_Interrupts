@@ -186,12 +186,12 @@ void SysTick_Handler(void)
   //modyfikator static oznacza ze wartosc zmiennej bedzie zachowana pomiedzy kolejnymi definicjami
   //tej samej zmiennej. Oznacza to że zmienna lokalna nie traci wartosci przy ponownym wywolaniu
   //funkcji.
-	static int clk_div;
-	clk_div++;
-	if (clk_div >= 100) {
-		HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-		clk_div = 0;
-	}
+	//static int clk_div;
+	//clk_div++;
+	//if (clk_div >= 100) {
+	//	HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	//	clk_div = 0;
+	//}
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();

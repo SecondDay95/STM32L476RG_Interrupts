@@ -2,8 +2,10 @@
 ../Core/Src/main.c:83:1:HAL_GPIO_EXTI_Callback	2
 ../Core/Src/main.c:93:6:send_text_message	3
 ../Core/Src/main.c:113:6:HAL_UART_TxCpltCallback	2
-../Core/Src/main.c:127:5:main	2
-../Core/Src/main.c:183:6:SystemClock_Config	4
-../Core/Src/main.c:244:13:MX_USART2_UART_Init	2
-../Core/Src/main.c:279:13:MX_GPIO_Init	1
-../Core/Src/main.c:321:6:Error_Handler	1
+../Core/Src/main.c:127:6:line_append	7
+../Core/Src/main.c:157:6:HAL_UART_RxCpltCallback	2
+../Core/Src/main.c:171:5:main	2
+../Core/Src/main.c:228:6:SystemClock_Config	4
+../Core/Src/main.c:289:13:MX_USART2_UART_Init	2
+../Core/Src/main.c:324:13:MX_GPIO_Init	1
+../Core/Src/main.c:366:6:Error_Handler	1
