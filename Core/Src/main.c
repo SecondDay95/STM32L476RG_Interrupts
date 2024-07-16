@@ -66,6 +66,22 @@ int __io_putchar(int ch) {
 
 	return 1;
 }
+//Volatile znaczy ulotny.
+//Oznacza to, że kompilator wyłączy dla takiej zmiennej optymalizacje typu zastąpienia przez stałą
+//lub zawartość rejestru, a zmusi kompilator do każdorazowego odwołania do pamięci. Główna pętla
+//naszego programu nie modyfikuje tej zmiennej, dlatego optymalizator mógłby założyć, że jest to
+//stała, której wartość wynosi zero. Taki program nie działałby poprawnie. Użycie volatile sprawia
+//, że optymalizator nie próbuje swoich sztuczek w odniesieniu do tej zmiennej.
+volatile uint32_t push_counter;
+
+//Obsługa przerwania od pinów (w naszym przypadku przycisk b1):
+HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+
+	if(GPIO_Pin == USER_BUTTON_Pin) {
+		push_counter++;
+	}
+
+}
 /* USER CODE END 0 */
 
 /**
@@ -104,9 +120,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t old_push_counter = push_counter;
   while (1)
   {
-	  printf("systick: %lu\n", HAL_GetTick());
+	  if(push_counter != old_push_counter) {
+		  old_push_counter = push_counter;
+		  printf("button counter: %lu\n", old_push_counter);
+	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -229,7 +250,7 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : USER_BUTTON_Pin */
   GPIO_InitStruct.Pin = USER_BUTTON_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(USER_BUTTON_GPIO_Port, &GPIO_InitStruct);
 
@@ -239,6 +260,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 8, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
