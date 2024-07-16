@@ -22,11 +22,16 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-
+typedef enum {
+	MESSAGE_1,
+	MESSAGE_2,
+	DONE
+}sender_state;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -82,6 +87,37 @@ HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
 	}
 
 }
+
+sender_state message_number = MESSAGE_1;
+
+void send_text_message(void) {
+
+	static char message[] = "Hello world!\r\n";
+	static char message2[] = "Wiadomosc 2!\r\n";
+
+	switch(message_number) {
+	case MESSAGE_1:
+		HAL_UART_Transmit_IT(&huart2, (uint8_t*)message, strlen(message));
+		message_number = 1;
+		break;
+	case MESSAGE_2:
+		HAL_UART_Transmit_IT(&huart2, (uint8_t*)message2, strlen(message2));
+		message_number = 2;
+		break;
+	default:
+		break;
+	}
+}
+
+//Funkcja wywolywana po wyslaniu danych przez UART:
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart) {
+
+	if(huart == &huart2) {
+		send_text_message();
+	}
+
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -116,6 +152,9 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  //Rozpoczecie transmisji przez UART z przerwaniamiL
+  send_text_message();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -127,6 +166,8 @@ int main(void)
 		  old_push_counter = push_counter;
 		  printf("button counter: %lu\n", old_push_counter);
 	  }
+
+
 
     /* USER CODE END WHILE */
 
